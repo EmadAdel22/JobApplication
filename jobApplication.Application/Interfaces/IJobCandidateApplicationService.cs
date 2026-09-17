@@ -5,11 +5,10 @@ using System.Text;
 
 namespace jobApplication.Application.Interfaces
 {
-    public interface IJobCandidateApplicationService
-    {
+  
         public interface IJobCandidateApplicationService
         {
             Task<int> ApplyAsync(ApplyJobDTO dto);
         }
-    }
+    
 }

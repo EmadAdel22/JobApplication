@@ -8,5 +8,7 @@ namespace jobApplication.Application.DTOs
     {
         public int CandidateId { get; set; }
         public int JobId { get; set; }
+
+
     }
 }

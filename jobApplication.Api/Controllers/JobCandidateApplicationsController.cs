@@ -1,0 +1,31 @@
+﻿using jobApplication.Application.DTOs;
+using jobApplication.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace jobApplication.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class JobCandidateApplicationsController : ControllerBase
+    {
+        private readonly IJobCandidateApplicationService _applicationService;
+
+        public JobCandidateApplicationsController(
+            IJobCandidateApplicationService applicationService)
+        {
+            _applicationService = applicationService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Apply(ApplyJobDTO dto)
+        {
+            var id = await _applicationService.ApplyAsync(dto);
+
+            return Ok(new
+            {
+                Id = id,
+                Message = "Application submitted successfully."
+            });
+        }
+    }
+}

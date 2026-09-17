@@ -44,15 +44,15 @@ namespace jobApplication.Application.Services
             if (!job.IsActive)
                 throw new Exception("This job is no longer accepting applications.");
 
-            var existingApplication = _applicationRepository
-                .Get()
-                .FirstOrDefault(x =>
-                    x.CandidateId == ApplyJobDTO.CandidateId &&
-                    x.JobId == ApplyJobDTO.JobId &&
-                    x.JobApplicationStatus != JobApplicationStatus.Cancelled);
+            //var existingApplication = _applicationRepository
+            //    .Get()
+            //    .FirstOrDefault(x =>
+            //        x.CandidateId == ApplyJobDTO.CandidateId &&
+            //        x.JobId == ApplyJobDTO.JobId &&
+            //        x.JobApplicationStatus != JobApplicationStatus.Cancelled);
 
-            if (existingApplication != null)
-                throw new Exception("Candidate has already applied for this job."); 
+            //if (existingApplication != null)
+            //    throw new Exception("Candidate has already applied for this job."); 
 
             var application = new JobCandidateApplication
             {
