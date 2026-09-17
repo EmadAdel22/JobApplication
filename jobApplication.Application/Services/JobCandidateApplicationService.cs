@@ -105,5 +105,59 @@ namespace jobApplication.Application.Services
 
 
         }
+
+        public async Task UpdateStatusAsync(
+    int applicationId,
+    UpdateApplicationStatusDTO dto)
+        {
+            var application = _applicationRepository
+                .Get()
+                .FirstOrDefault(x => x.Id == applicationId);
+
+            if (application == null)
+                throw new Exception("Application not found.");
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Cancelled)
+                throw new Exception("Cancelled application cannot be updated.");
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Accepted ||
+                application.JobApplicationStatus == JobApplicationStatus.Rejected)
+            {
+                throw new Exception(
+                    "Accepted or Rejected application cannot be updated.");
+            }
+
+            // Check valid status transition
+            if (application.JobApplicationStatus == JobApplicationStatus.Applied &&
+                dto.Status != JobApplicationStatus.UnderReview &&
+                dto.Status != JobApplicationStatus.Rejected)
+            {
+                throw new Exception(
+                    "Application can only move to UnderReview or Rejected.");
+            }
+
+            if (application.JobApplicationStatus == JobApplicationStatus.UnderReview &&
+                dto.Status != JobApplicationStatus.Interview &&
+                dto.Status != JobApplicationStatus.Rejected)
+            {
+                throw new Exception(
+                    "Application can only move to Interview or Rejected.");
+            }
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Interview &&
+                dto.Status != JobApplicationStatus.Accepted &&
+                dto.Status != JobApplicationStatus.Rejected)
+            {
+                throw new Exception(
+                    "Application can only move to Accepted or Rejected.");
+            }
+
+            application.JobApplicationStatus = dto.Status;
+            application.StatusUpdatedAt = DateTime.UtcNow;
+
+            _applicationRepository.Update(application);
+
+            await _applicationRepository.SaveChangesAsync();
+        }
     }
 }

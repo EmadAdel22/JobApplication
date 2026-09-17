@@ -38,5 +38,18 @@ namespace jobApplication.Api.Controllers
                 Message = "Application cancelled successfully."
             });
         }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(
+    int id,
+    UpdateApplicationStatusDTO dto)
+        {
+            await _applicationService.UpdateStatusAsync(id, dto);
+
+            return Ok(new
+            {
+                Message = "Application status updated successfully."
+            });
+        }
     }
 }

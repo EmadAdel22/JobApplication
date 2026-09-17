@@ -10,7 +10,10 @@ namespace jobApplication.Application.Interfaces
         {
             Task<int> ApplyAsync(ApplyJobDTO dto);
 
-            Task CancelAsync(int applicationId);
+        Task CancelAsync(int applicationId);
+
+        Task UpdateStatusAsync(int applicationId, UpdateApplicationStatusDTO dto);
+
 
     }
 
