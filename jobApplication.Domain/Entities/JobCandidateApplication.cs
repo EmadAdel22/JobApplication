@@ -28,5 +28,7 @@ namespace jobApplication.Domain.Entities
         public DateTime AppliedAt { get; set; }
 
         public DateTime StatusUpdatedAt { get; set; }
+
+        public DateTime? CancelledAt { get; set; }
     }
 }

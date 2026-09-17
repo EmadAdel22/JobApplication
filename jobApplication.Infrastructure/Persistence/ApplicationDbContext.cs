@@ -11,6 +11,9 @@ namespace jobApplication.Infrastructure.Persistence
 
         public DbSet<Job> jobs { get; set; }
         public DbSet<Candidate> candidates { get; set; }
+
+        public DbSet<JobCandidateApplication> JobCandidateApplications { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
         {
