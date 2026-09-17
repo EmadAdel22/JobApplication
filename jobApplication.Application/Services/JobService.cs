@@ -33,5 +33,27 @@ namespace jobApplication.Application.Services
             return job.Id;
         }
 
-    }
+        public async Task CloseAsync(int jobId)
+        {
+            var job = _jobRepository
+                .Get()
+                .FirstOrDefault(x => x.Id == jobId);
+
+            if (job == null)
+                throw new Exception("Job not found.");
+
+            if (!job.IsActive)
+                throw new Exception("Job is already closed.");
+
+            job.IsActive = false;
+            job.ClosedAt = DateTime.UtcNow;
+
+
+            _jobRepository.Update(job);
+
+            await _jobRepository.SaveChangesAsync();
+        }
+    
+
+}
 }

@@ -25,5 +25,16 @@ namespace jobApplication.Api.Controllers
 
         }
 
+        [HttpPut("{id}/close")]
+        public async Task<IActionResult> Close(int id)
+        {
+            await _jobService.CloseAsync(id);
+
+            return Ok(new
+            {
+                Message = "Job closed successfully."
+            });
+        }
+
     }
 }
