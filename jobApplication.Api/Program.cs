@@ -15,6 +15,12 @@ namespace jobApplication.Api
             builder.Services.AddScoped<JobService>();
             builder.Services.AddScoped<IJobRepository, JobRepository>();
             builder.Services.AddScoped<IJobCandidateApplicationRepository, JobCandidateApplicationRepository>();
+            builder.Services.AddScoped<IJobCandidateApplicationService,JobCandidateApplicationService>();
+            builder.Services.AddScoped< ICandidateRepository,CandidateRepository>();
+
+            builder.Services.AddScoped<
+                IJobCandidateApplicationRepository,
+                JobCandidateApplicationRepository>();
             // Add services to the container.
 
             builder.Services.AddControllers();
