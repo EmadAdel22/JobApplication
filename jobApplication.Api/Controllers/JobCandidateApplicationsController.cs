@@ -27,5 +27,16 @@ namespace jobApplication.Api.Controllers
                 Message = "Application submitted successfully."
             });
         }
+
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            await _applicationService.CancelAsync(id);
+
+            return Ok(new
+            {
+                Message = "Application cancelled successfully."
+            });
+        }
     }
 }

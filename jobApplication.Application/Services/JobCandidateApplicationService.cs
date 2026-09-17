@@ -69,5 +69,41 @@ namespace jobApplication.Application.Services
 
         }
 
+        public async Task  CancelAsync(int applicationId)
+        {
+
+
+            var application = _applicationRepository
+                .Get()
+                .FirstOrDefault(x => x.Id == applicationId);
+
+            if (application == null)
+                throw new Exception("Application not found.");
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Interview ||
+                application.JobApplicationStatus == JobApplicationStatus.Accepted ||
+                application.JobApplicationStatus == JobApplicationStatus.Rejected)
+            {
+                throw new Exception(
+                    "You cannot cancel the application after reaching this stage.");
+            }
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Cancelled)
+            {
+                throw new Exception("Application is already cancelled.");
+            }
+
+            application.JobApplicationStatus = JobApplicationStatus.Cancelled;
+
+            application.CancelledAt = DateTime.UtcNow;
+
+            application.StatusUpdatedAt = DateTime.UtcNow;
+
+            _applicationRepository.Update(application);
+
+            await _applicationRepository.SaveChangesAsync();
+
+
+        }
     }
 }
