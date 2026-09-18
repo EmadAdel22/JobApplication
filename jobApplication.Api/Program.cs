@@ -17,6 +17,9 @@ namespace jobApplication.Api
             builder.Services.AddScoped<IJobCandidateApplicationRepository, JobCandidateApplicationRepository>();
             builder.Services.AddScoped<IJobCandidateApplicationService,JobCandidateApplicationService>();
             builder.Services.AddScoped< ICandidateRepository,CandidateRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<
                 IJobCandidateApplicationRepository,
