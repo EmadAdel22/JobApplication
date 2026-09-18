@@ -69,6 +69,41 @@ namespace jobApplication.Application.Services
 
         }
 
+        //public async Task ApplyAsync(ApplyJobDTO dto,int userId)
+        //{
+        //    var candidate = _candidateRepository
+        //        .Get()
+        //        .FirstOrDefault(x => x.UserId == userId);
+
+        //    if (candidate == null)
+        //        throw new Exception("Candidate not found.");
+
+        //    var job = _jobRepository
+        //        .Get()
+        //        .FirstOrDefault(x => x.Id == dto.JobId);
+
+        //    if (job == null)
+        //        throw new Exception("Job not found.");
+
+        //    if (!job.IsActive)
+        //        throw new Exception(
+        //            "This job is no longer accepting applications.");
+
+        //    // باقي الـ validation الموجودة عندك
+
+        //    var application = new JobCandidateApplication
+        //    {
+        //        CandidateId = candidate.Id,
+        //        JobId = dto.JobId,
+        //        JobApplicationStatus = JobApplicationStatus.Applied,
+        //        AppliedAt = DateTime.UtcNow,
+        //        StatusUpdatedAt = DateTime.UtcNow
+        //    };
+
+        //    await _applicationRepository.InsertAsync(application);
+        //    await _applicationRepository.SaveChangesAsync();
+        //}
+
         public async Task  CancelAsync(int applicationId)
         {
 
@@ -159,5 +194,7 @@ namespace jobApplication.Application.Services
 
             await _applicationRepository.SaveChangesAsync();
         }
+
+        
     }
 }

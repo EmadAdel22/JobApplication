@@ -1,4 +1,5 @@
-﻿using jobApplication.Application.DTOs.Auth;
+﻿using jobApplication.Application.DTOs;
+using jobApplication.Application.DTOs.Auth;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,6 @@ namespace jobApplication.Application.Interfaces
     {
         Task<int> RegisterAsync(RegisterDTO RegisterDTO);
 
-        Task LoginAsync(LoginDTO LoginDTO);
+        Task<LoginResponseDTO> LoginAsync(LoginDTO LoginDTO);
     }
 }

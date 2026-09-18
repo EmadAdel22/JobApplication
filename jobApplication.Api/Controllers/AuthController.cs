@@ -27,5 +27,13 @@ namespace jobApplication.Api.Controllers
                 Message = "Registration successful."
             });
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO dto)
+        {
+            var result = await _authService.LoginAsync(dto);
+
+            return Ok(result);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using jobApplication.Application.DTOs;
 using jobApplication.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,6 +36,18 @@ namespace jobApplication.Api.Controllers
                 Message = "Job closed successfully."
             });
         }
+
+        //[Authorize(Roles = "Recruiter")]
+        //[HttpPut("{id}/close")]
+        //public async Task<IActionResult> Close(int id)
+        //{
+        //    await _jobService.CloseAsync(id);
+
+        //    return Ok(new
+        //    {
+        //        Message = "Job closed successfully."
+        //    });
+        //}
 
     }
 }
