@@ -1,5 +1,8 @@
-﻿using jobApplication.Application.DTOs;
+﻿using jobApplication.Application.Commands.Applications.ApplyForJob;
+using jobApplication.Application.Commands.Applications.CancelApplication;
+using jobApplication.Application.DTOs;
 using jobApplication.Application.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,42 +15,35 @@ namespace jobApplication.Api.Controllers
     {
         private readonly IJobCandidateApplicationService _applicationService;
 
+        private readonly IMediator _mediator;
+
         public JobCandidateApplicationsController(
-            IJobCandidateApplicationService applicationService)
+            IJobCandidateApplicationService applicationService, IMediator mediator)
         {
             _applicationService = applicationService;
+            _mediator = mediator;
         }
 
 
         [Authorize(Roles = "Candidate")]
         [HttpPost]
-        public async Task<IActionResult> Apply(ApplyJobDTO dto)
+        public async Task<IActionResult> Apply(ApplyForJobCommand command)
         {
-            // var id = await _applicationService.ApplyAsync(dto);
-
             var userId = int.Parse(
-              User.FindFirstValue(ClaimTypes.NameIdentifier));
+                User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            await _applicationService.ApplyAsync(dto, userId);
+            command.UserId = userId;
 
+            var applicationId = await _mediator.Send(command);
 
             return Ok(new
             {
-               // Id = id,
+                Id = applicationId,
                 Message = "Application submitted successfully."
             });
         }
 
-        //[HttpPut("{id}/cancel")]
-        //public async Task<IActionResult> Cancel(int id)
-        //{
-        //    await _applicationService.CancelAsync(id);
 
-        //    return Ok(new
-        //    {
-        //        Message = "Application cancelled successfully."
-        //    });
-        //}
 
         [Authorize(Roles = "Candidate")]
         [HttpPut("{id}/cancel")]
@@ -56,13 +52,20 @@ namespace jobApplication.Api.Controllers
             var userId = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            await _applicationService.CancelAsync(id, userId);
+            var command = new CancelApplicationCommand
+            {
+                ApplicationId = id,
+                UserId = userId
+            };
+
+            await _mediator.Send(command);
 
             return Ok(new
             {
                 Message = "Application cancelled successfully."
             });
         }
+
 
         //    [HttpPut("{id}/status")]
         //    public async Task<IActionResult> UpdateStatus(

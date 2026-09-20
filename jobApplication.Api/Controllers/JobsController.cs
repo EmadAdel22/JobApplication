@@ -1,5 +1,9 @@
-﻿using jobApplication.Application.DTOs;
+﻿using jobApplication.Application.Commands.Jobs.CreateJob;
+using jobApplication.Application.DTOs;
+using jobApplication.Application.Queries.Jobs.GetJobById;
+using jobApplication.Application.Queries.Jobs.GetJobs;
 using jobApplication.Application.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,33 +14,57 @@ namespace jobApplication.Api.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
+        private readonly IMediator _mediator;
+
         private readonly JobService _jobService;
-        public JobsController(JobService jobService)
+
+        public JobsController(IMediator mediator, JobService jobService)
         {
+            _mediator = mediator;
             _jobService = jobService;
         }
 
-        //[HttpPost]
 
-        //public async Task<IActionResult> Creat(AddJobDTO jobDTo)
-        //{
-        // var id=  await _jobService.CreateAsync(jobDTo);
+        // GET: api/Jobs
+        [HttpGet]
+        public async Task<IActionResult> GetJobs()
+        {
+            var query = new GetJobsQuery();
 
-        //    return Ok(new { Id = id });
+            var result = await _mediator.Send(query);
 
-        //}
+            return Ok(result);
+        }
+
+        // GET: api/Jobs/id
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var query = new GetJobByIdQuery
+            {
+                Id = id
+            };
+
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
+        }
+
 
         [Authorize(Roles = "Recruiter")]
         [HttpPost]
-        public async Task<IActionResult> Creat(AddJobDTO jobDTO)
+        public async Task<IActionResult> Create(
+            CreateJobCommand command)
         {
-            var id = await _jobService.CreateAsync(jobDTO);
+            var id = await _mediator.Send(command);
 
             return Ok(new
             {
                 Id = id
             });
         }
+        
 
         //[HttpPut("{id}/close")]
         //public async Task<IActionResult> Close(int id)

@@ -1,11 +1,12 @@
+using jobApplication.Application.Commands.Jobs.CreateJob;
 using jobApplication.Application.Interfaces;
 using jobApplication.Application.Services;
 using jobApplication.Infrastructure.Persistence;
 using jobApplication.Infrastructure.Reposatpories;
-using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using System.Text;
 namespace jobApplication.Api
 {
@@ -24,6 +25,13 @@ namespace jobApplication.Api
             builder.Services.AddScoped<IJwtService, JwtService>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
+
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(
+                    typeof(CreateJobCommand).Assembly);
+            }); 
+
 
             builder.Services.AddScoped<
                 IJobCandidateApplicationRepository,
