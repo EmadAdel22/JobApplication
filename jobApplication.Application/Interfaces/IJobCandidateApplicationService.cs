@@ -8,12 +8,12 @@ namespace jobApplication.Application.Interfaces
   
         public interface IJobCandidateApplicationService
         {
-            Task<int> ApplyAsync(ApplyJobDTO dto);
-       // Task ApplyAsync(ApplyJobDTO dto, int userId);
+            //Task<int> ApplyAsync(ApplyJobDTO dto);
+           Task ApplyAsync(ApplyJobDTO dto, int userId);
 
 
-        Task CancelAsync(int applicationId);
-       // Task CancelAsync(int applicationId, int userId);
+        //Task CancelAsync(int applicationId);
+        Task CancelAsync(int applicationId, int userId);
 
         Task UpdateStatusAsync(int applicationId, UpdateApplicationStatusDTO dto);
 

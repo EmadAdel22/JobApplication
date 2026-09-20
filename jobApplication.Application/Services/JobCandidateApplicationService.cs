@@ -25,76 +25,39 @@ namespace jobApplication.Application.Services
             _candidateRepository = candidateRepository;
         }
 
-        public async Task<int> ApplyAsync(ApplyJobDTO ApplyJobDTO)
-        {
-            var candidate = _candidateRepository
-                            .Get()
-                            .FirstOrDefault(x => x.Id == ApplyJobDTO.CandidateId);
-
-            if (candidate == null)
-                throw new Exception("Candidate not found.");
-
-            var job = _jobRepository
-                .Get()
-                .FirstOrDefault(x => x.Id == ApplyJobDTO.JobId);
-
-            if (job == null)
-                throw new Exception("Job not found.");
-
-            if (!job.IsActive)
-                throw new Exception("This job is no longer accepting applications.");
-
-            //var existingApplication = _applicationRepository
-            //    .Get()
-            //    .FirstOrDefault(x =>
-            //        x.CandidateId == ApplyJobDTO.CandidateId &&
-            //        x.JobId == ApplyJobDTO.JobId &&
-            //        x.JobApplicationStatus != JobApplicationStatus.Cancelled);
-
-            //if (existingApplication != null)
-            //    throw new Exception("Candidate has already applied for this job."); 
-
-            var application = new JobCandidateApplication
-            {
-                CandidateId = ApplyJobDTO.CandidateId,
-                JobId = ApplyJobDTO.JobId,
-                JobApplicationStatus = JobApplicationStatus.Applied,
-                AppliedAt = DateTime.UtcNow,
-                StatusUpdatedAt = DateTime.UtcNow
-            };
-
-            await _applicationRepository.InsertAsync(application);
-            await _applicationRepository.SaveChangesAsync();
-            return application.Id;
-
-        }
-
-        //public async Task ApplyAsync(ApplyJobDTO dto,int userId)
+        //public async Task<int> ApplyAsync(ApplyJobDTO ApplyJobDTO)
         //{
         //    var candidate = _candidateRepository
-        //        .Get()
-        //        .FirstOrDefault(x => x.UserId == userId);
+        //                    .Get()
+        //                    .FirstOrDefault(x => x.Id == ApplyJobDTO.CandidateId);
 
         //    if (candidate == null)
         //        throw new Exception("Candidate not found.");
 
         //    var job = _jobRepository
         //        .Get()
-        //        .FirstOrDefault(x => x.Id == dto.JobId);
+        //        .FirstOrDefault(x => x.Id == ApplyJobDTO.JobId);
 
         //    if (job == null)
         //        throw new Exception("Job not found.");
 
         //    if (!job.IsActive)
-        //        throw new Exception(
-        //            "This job is no longer accepting applications.");
+        //        throw new Exception("This job is no longer accepting applications.");
 
-        //    // باقي الـ validation الموجودة عندك
+        //    //var existingApplication = _applicationRepository
+        //    //    .Get()
+        //    //    .FirstOrDefault(x =>
+        //    //        x.CandidateId == ApplyJobDTO.CandidateId &&
+        //    //        x.JobId == ApplyJobDTO.JobId &&
+        //    //        x.JobApplicationStatus != JobApplicationStatus.Cancelled);
+
+        //    //if (existingApplication != null)
+        //    //    throw new Exception("Candidate has already applied for this job."); 
 
         //    var application = new JobCandidateApplication
         //    {
-        //        CandidateId = candidate.Id,
-        //        JobId = dto.JobId,
+        //        CandidateId = ApplyJobDTO.CandidateId,
+        //        JobId = ApplyJobDTO.JobId,
         //        JobApplicationStatus = JobApplicationStatus.Applied,
         //        AppliedAt = DateTime.UtcNow,
         //        StatusUpdatedAt = DateTime.UtcNow
@@ -102,12 +65,84 @@ namespace jobApplication.Application.Services
 
         //    await _applicationRepository.InsertAsync(application);
         //    await _applicationRepository.SaveChangesAsync();
+        //    return application.Id;
+
         //}
 
-        public async Task  CancelAsync(int applicationId)
+        public async Task ApplyAsync(ApplyJobDTO dto, int userId)
         {
+            var candidate = _candidateRepository
+                .Get()
+                .FirstOrDefault(x => x.UserId == userId);
+
+            if (candidate == null)
+                throw new Exception("Candidate not found.");
+
+            var job = _jobRepository
+                .Get()
+                .FirstOrDefault(x => x.Id == dto.JobId);
+
+            if (job == null)
+                throw new Exception("Job not found.");
+
+            if (!job.IsActive)
+                throw new Exception(
+                    "This job is no longer accepting applications.");
+
+            // باقي الـ validation الموجودة عندك
+
+            var application = new JobCandidateApplication
+            {
+                CandidateId = candidate.Id,
+                JobId = dto.JobId,
+                JobApplicationStatus = JobApplicationStatus.Applied,
+                AppliedAt = DateTime.UtcNow,
+                StatusUpdatedAt = DateTime.UtcNow
+            };
+
+            await _applicationRepository.InsertAsync(application);
+            await _applicationRepository.SaveChangesAsync();
+        }
+
+        //public async Task  CancelAsync(int applicationId)
+        //{
 
 
+        //    var application = _applicationRepository
+        //        .Get()
+        //        .FirstOrDefault(x => x.Id == applicationId);
+
+        //    if (application == null)
+        //        throw new Exception("Application not found.");
+
+        //    if (application.JobApplicationStatus == JobApplicationStatus.Interview ||
+        //        application.JobApplicationStatus == JobApplicationStatus.Accepted ||
+        //        application.JobApplicationStatus == JobApplicationStatus.Rejected)
+        //    {
+        //        throw new Exception(
+        //            "You cannot cancel the application after reaching this stage.");
+        //    }
+
+        //    if (application.JobApplicationStatus == JobApplicationStatus.Cancelled)
+        //    {
+        //        throw new Exception("Application is already cancelled.");
+        //    }
+
+        //    application.JobApplicationStatus = JobApplicationStatus.Cancelled;
+
+        //    application.CancelledAt = DateTime.UtcNow;
+
+        //    application.StatusUpdatedAt = DateTime.UtcNow;
+
+        //    _applicationRepository.Update(application);
+
+        //    await _applicationRepository.SaveChangesAsync();
+
+
+        //}
+
+        public async Task CancelAsync(int applicationId, int userId)
+        {
             var application = _applicationRepository
                 .Get()
                 .FirstOrDefault(x => x.Id == applicationId);
@@ -115,20 +150,37 @@ namespace jobApplication.Application.Services
             if (application == null)
                 throw new Exception("Application not found.");
 
-            if (application.JobApplicationStatus == JobApplicationStatus.Interview ||
-                application.JobApplicationStatus == JobApplicationStatus.Accepted ||
-                application.JobApplicationStatus == JobApplicationStatus.Rejected)
-            {
+            // Get the candidate related to the logged-in user
+            var candidate = _candidateRepository
+                .Get()
+                .FirstOrDefault(x => x.UserId == userId);
+
+            if (candidate == null)
+                throw new Exception("Candidate not found.");
+
+            // Make sure the application belongs to this candidate
+            if (application.CandidateId != candidate.Id)
                 throw new Exception(
-                    "You cannot cancel the application after reaching this stage.");
-            }
+                    "You are not allowed to cancel this application.");
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Interview)
+                throw new Exception(
+                    "You cannot cancel the application after the interview.");
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Accepted)
+                throw new Exception(
+                    "You cannot cancel an accepted application.");
+
+            if (application.JobApplicationStatus == JobApplicationStatus.Rejected)
+                throw new Exception(
+                    "You cannot cancel a rejected application.");
 
             if (application.JobApplicationStatus == JobApplicationStatus.Cancelled)
-            {
-                throw new Exception("Application is already cancelled.");
-            }
+                throw new Exception(
+                    "Application is already cancelled.");
 
-            application.JobApplicationStatus = JobApplicationStatus.Cancelled;
+            application.JobApplicationStatus =
+                JobApplicationStatus.Cancelled;
 
             application.CancelledAt = DateTime.UtcNow;
 
@@ -137,8 +189,6 @@ namespace jobApplication.Application.Services
             _applicationRepository.Update(application);
 
             await _applicationRepository.SaveChangesAsync();
-
-
         }
 
         public async Task UpdateStatusAsync(

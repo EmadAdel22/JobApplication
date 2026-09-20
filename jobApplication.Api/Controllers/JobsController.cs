@@ -16,28 +16,28 @@ namespace jobApplication.Api.Controllers
             _jobService = jobService;
         }
 
+        //[HttpPost]
+
+        //public async Task<IActionResult> Creat(AddJobDTO jobDTo)
+        //{
+        // var id=  await _jobService.CreateAsync(jobDTo);
+
+        //    return Ok(new { Id = id });
+
+        //}
+
+        [Authorize(Roles = "Recruiter")]
         [HttpPost]
-
-        public async Task<IActionResult> Creat(AddJobDTO jobDTo)
+        public async Task<IActionResult> Creat(AddJobDTO jobDTO)
         {
-         var id=  await _jobService.CreateAsync(jobDTo);
-
-            return Ok(new { Id = id });
-
-        }
-
-        [HttpPut("{id}/close")]
-        public async Task<IActionResult> Close(int id)
-        {
-            await _jobService.CloseAsync(id);
+            var id = await _jobService.CreateAsync(jobDTO);
 
             return Ok(new
             {
-                Message = "Job closed successfully."
+                Id = id
             });
         }
 
-        //[Authorize(Roles = "Recruiter")]
         //[HttpPut("{id}/close")]
         //public async Task<IActionResult> Close(int id)
         //{
@@ -48,6 +48,18 @@ namespace jobApplication.Api.Controllers
         //        Message = "Job closed successfully."
         //    });
         //}
+
+        [Authorize(Roles = "Recruiter")]
+        [HttpPut("{id}/close")]
+        public async Task<IActionResult> Close(int id)
+        {
+            await _jobService.CloseAsync(id);
+
+            return Ok(new
+            {
+                Message = "Job closed successfully."
+            });
+        }
 
     }
 }

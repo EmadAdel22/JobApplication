@@ -19,44 +19,29 @@ namespace jobApplication.Api.Controllers
         }
 
 
-       // [Authorize(Roles = "Candidate")]
+        [Authorize(Roles = "Candidate")]
         [HttpPost]
         public async Task<IActionResult> Apply(ApplyJobDTO dto)
         {
-             var id = await _applicationService.ApplyAsync(dto);
+            // var id = await _applicationService.ApplyAsync(dto);
 
-           // var userId = int.Parse(
-            //  User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(
+              User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-          //  await _applicationService.ApplyAsync(dto, userId);
+            await _applicationService.ApplyAsync(dto, userId);
 
 
             return Ok(new
             {
-                Id = id,
+               // Id = id,
                 Message = "Application submitted successfully."
             });
         }
 
-        [HttpPut("{id}/cancel")]
-        public async Task<IActionResult> Cancel(int id)
-        {
-            await _applicationService.CancelAsync(id);
-
-            return Ok(new
-            {
-                Message = "Application cancelled successfully."
-            });
-        }
-
-        //[Authorize(Roles = "Candidate")]
         //[HttpPut("{id}/cancel")]
         //public async Task<IActionResult> Cancel(int id)
         //{
-        //    var userId = int.Parse(
-        //        User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-        //    await _applicationService.CancelAsync(id, userId);
+        //    await _applicationService.CancelAsync(id);
 
         //    return Ok(new
         //    {
@@ -64,21 +49,21 @@ namespace jobApplication.Api.Controllers
         //    });
         //}
 
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateStatus(
-    int id,
-    UpdateApplicationStatusDTO dto)
+        [Authorize(Roles = "Candidate")]
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> Cancel(int id)
         {
-            await _applicationService.UpdateStatusAsync(id, dto);
+            var userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            await _applicationService.CancelAsync(id, userId);
 
             return Ok(new
             {
-                Message = "Application status updated successfully."
+                Message = "Application cancelled successfully."
             });
         }
 
-
-        //    [Authorize(Roles = "Recruiter")]
         //    [HttpPut("{id}/status")]
         //    public async Task<IActionResult> UpdateStatus(
         //int id,
@@ -91,5 +76,20 @@ namespace jobApplication.Api.Controllers
         //            Message = "Application status updated successfully."
         //        });
         //    }
+
+
+        [Authorize(Roles = "Recruiter")]
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(
+    int id,
+    UpdateApplicationStatusDTO dto)
+        {
+            await _applicationService.UpdateStatusAsync(id, dto);
+
+            return Ok(new
+            {
+                Message = "Application status updated successfully."
+            });
+        }
     }
 }
