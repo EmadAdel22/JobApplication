@@ -1,4 +1,5 @@
-﻿using jobApplication.Application.Commands.Jobs.CreateJob;
+﻿using jobApplication.Application.Commands.Jobs.CloseJob;
+using jobApplication.Application.Commands.Jobs.CreateJob;
 using jobApplication.Application.DTOs;
 using jobApplication.Application.Queries.Jobs.GetJobById;
 using jobApplication.Application.Queries.Jobs.GetJobs;
@@ -64,24 +65,18 @@ namespace jobApplication.Api.Controllers
                 Id = id
             });
         }
-        
 
-        //[HttpPut("{id}/close")]
-        //public async Task<IActionResult> Close(int id)
-        //{
-        //    await _jobService.CloseAsync(id);
-
-        //    return Ok(new
-        //    {
-        //        Message = "Job closed successfully."
-        //    });
-        //}
 
         [Authorize(Roles = "Recruiter")]
         [HttpPut("{id}/close")]
         public async Task<IActionResult> Close(int id)
         {
-            await _jobService.CloseAsync(id);
+            var command = new CloseJobCommand
+            {
+                JobId = id
+            };
+
+            await _mediator.Send(command);
 
             return Ok(new
             {

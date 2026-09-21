@@ -19,10 +19,4 @@
     <ProjectReference Include="..\jobApplication.Domain\jobApplication.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\Applications\UpdateApplicationStatus\" />
-    <Folder Include="Queries\Applications\GetApplicationById\" />
-    <Folder Include="Queries\Applications\GetApplications\" />
-  </ItemGroup>
-
 </Project>
