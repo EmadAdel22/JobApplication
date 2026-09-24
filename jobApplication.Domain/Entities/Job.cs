@@ -11,7 +11,7 @@ namespace jobApplication.Domain.Entities
         public string Description { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime? ClosedAt { get; set; }
-
+        public DateTime CreatedAt { get; set; }
         public ICollection<JobCandidateApplication> Applications { get; set; }
 
     }

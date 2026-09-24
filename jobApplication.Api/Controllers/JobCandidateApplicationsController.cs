@@ -28,7 +28,7 @@ namespace jobApplication.Api.Controllers
         }
 
 
-        [Authorize(Roles = "Candidate")]
+       /// [Authorize(Roles = "Candidate")]
         [HttpPost]
         public async Task<IActionResult> Apply(ApplyForJobCommand command)
         {

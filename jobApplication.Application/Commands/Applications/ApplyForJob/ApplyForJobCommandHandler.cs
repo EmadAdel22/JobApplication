@@ -1,11 +1,12 @@
-﻿using jobApplication.Application.Interfaces;
+﻿using Hangfire;
+using jobApplication.Application.Interfaces;
+using jobApplication.Application.Services;
 using jobApplication.Domain.Entities;
 using jobApplication.Domain.Enum;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 namespace jobApplication.Application.Commands.Applications.ApplyForJob
 {
     public class ApplyForJobCommandHandler : IRequestHandler<ApplyForJobCommand, int>
@@ -65,7 +66,8 @@ namespace jobApplication.Application.Commands.Applications.ApplyForJob
 
             await _applicationRepository.InsertAsync(application);
             await _applicationRepository.SaveChangesAsync();
-
+            BackgroundJob.Enqueue<NotificationService>(
+    x => x.SendApplicationNotification(application.Id));
             return application.Id;
         }
     }

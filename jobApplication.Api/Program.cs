@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
+using Hangfire;
+using Hangfire.SqlServer;
 namespace jobApplication.Api
 {
     public class Program
@@ -23,9 +25,9 @@ namespace jobApplication.Api
             builder.Services.AddScoped< ICandidateRepository,CandidateRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
-
+            builder.Services.AddScoped<NotificationService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-
+            builder.Services.AddScoped<JobAutoCloseService>();
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(
@@ -85,6 +87,17 @@ namespace jobApplication.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddHangfire(config =>
+            {
+                config.UseSqlServerStorage(
+                    builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddHangfireServer();
+            RecurringJob.AddOrUpdate<JobAutoCloseService>(
+    "auto-close-old-jobs",
+    x => x.CloseOldJobs(),
+    Cron.Daily);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -102,7 +115,7 @@ namespace jobApplication.Api
 
 
             app.UseAuthorization();
-
+            app.UseHangfireDashboard("/hangfire");
 
             app.MapControllers();
 
